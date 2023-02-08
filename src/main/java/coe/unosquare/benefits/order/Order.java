@@ -8,6 +8,7 @@
 
 package coe.unosquare.benefits.order;
 
+import coe.unosquare.benefits.exception.ProductDataInvalidException;
 import coe.unosquare.benefits.product.Product;
 import java.util.Map;
 
@@ -15,7 +16,10 @@ import java.util.Map;
  * The type Order.
  */
 public class Order {
-    /** Store the final list of products and quantity for each product. **/
+
+    /**
+     * Store the final list of products and quantity for each product.
+     **/
     private final Map<Product, Integer> products;
 
     /**
@@ -23,62 +27,61 @@ public class Order {
      *
      * @param productsMap the list of products added to the order
      */
-    public Order(final Map<Product, Integer> productsMap) {
+    public Order(Map<Product, Integer> productsMap) {
         products = productsMap;
     }
 
+
     /**
-     * Pay double.
+     * addProduct
      *
-     * @param paymentType the payment type
-     * @return the double
+     * @param product  the product
+     * @param quantity the quantity for the product
      */
-    public Double pay(final String paymentType) {
-        Double discount;
-        if (paymentType.equals("Visa")) {
-            if (products.values()
-                    .stream()
-                    .reduce(0, (totalProductCount, quantity) -> totalProductCount += quantity) >= 10) {
-                discount = 0.15;
-            } else if (products.values()
-                    .stream()
-                    .reduce(0, (totalProductCount, quantity) -> totalProductCount += quantity) >= 7) {
-                discount = 0.10;
+    public void addProduct(Product product, int quantity) {
+        try {
+            product.validate();
+
+            if (products.containsKey(product)) {
+                products.put(product, products.get(product) + quantity);
+
             } else {
-                discount = 0.05;
+                products.put(product, quantity);
             }
-        } else if (paymentType.equals("Mastercard")) {
-            if (products.entrySet()
-                    .stream()
-                    .mapToDouble(product -> product.getKey().getPrice() * product.getValue())
-                    .sum() >= 100) {
-                discount = 0.17;
-            } else if (products.entrySet().stream()
-                    .mapToDouble(product -> product.getKey().getPrice() * product.getValue())
-                    .sum() >= 75) {
-                discount = 0.12;
-            } else {
-                discount = 0.08;
-            }
-        } else {
-            discount = 0.0;
+        } catch (ProductDataInvalidException e) {
+            System.out.println(e.getMessage());
+            e.getListOfErrors()
+                    .forEach(System.err::println);
         }
-        double subtotal = products.entrySet()
-                            .stream()
-                            .mapToDouble(product -> product.getKey().getPrice() * product.getValue())
-                            .sum();
-        return subtotal - subtotal * discount;
+    }
+
+
+    /**
+     * removeProduct
+     *
+     * @param product the product to remove
+     */
+    public void removeProduct(Product product) {
+        products.remove(product);
+    }
+
+
+    /**
+     * getNumberOfProductsInOrder
+     *
+     * @return the size of the order
+     */
+    public int getNumberOfProductsInOrder(){
+        return this.products.size();
     }
 
     /**
-     * Print.
+     * getOrder
+     *
+     * @return the products in the order
      */
-    public void print() {
-         products.forEach((product, quantity) ->
-                 System.out.println("Product:{" + product.getName() + ","
-                         + product.getPrice() + ","
-                         + product.getType()
-                         + "},Quantity:" + quantity
-                         + ",Total:" + product.getPrice() * quantity));
+    public Map<Product, Integer> getOrder(){
+        return products;
     }
+
 }

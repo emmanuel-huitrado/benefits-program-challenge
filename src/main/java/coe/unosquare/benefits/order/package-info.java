@@ -9,7 +9,7 @@
 /**
  * This package contains all classes related to Order object related.
  *
- * @author Emmanuel Huitrado
+ * @author Emmanuel Huitrado, Luis Orozco
  * @version 1.0
  */
 

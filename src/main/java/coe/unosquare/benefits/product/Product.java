@@ -8,16 +8,23 @@
 
 package coe.unosquare.benefits.product;
 
+import coe.unosquare.benefits.exception.ValidationError;
+import coe.unosquare.benefits.exception.ProductDataInvalidException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * The type Product.
  */
 public class Product {
     /** The Product name. **/
-    private String productName;
+    private final String productName;
     /** The Product price. **/
-    private Double productPrice;
+    private final Double productPrice;
     /** The Product type defined by: 1 = Basic need, 2 =  Work tool, 3 = Luxury.  **/
-    private Integer productType;
+    private final ProductType productType;
 
     /**
      * Instantiates a new Product.
@@ -26,7 +33,7 @@ public class Product {
      * @param price the price
      * @param type  the type
      */
-    public Product(final String name, final Double price, final Integer type) {
+    private Product(final String name, final Double price, final ProductType type) {
         productName = name;
         productPrice = price;
         productType = type;
@@ -42,15 +49,6 @@ public class Product {
     }
 
     /**
-     * Sets name.
-     *
-     * @param name the name
-     */
-    public void setName(final String name) {
-        productName = name;
-    }
-
-    /**
      * Gets price.
      *
      * @return the price
@@ -60,30 +58,12 @@ public class Product {
     }
 
     /**
-     * Sets price.
-     *
-     * @param price the price
-     */
-    public void setPrice(final Double price) {
-        productPrice = price;
-    }
-
-    /**
      * Gets type.
      *
      * @return the type
      */
-    public Integer getType() {
+    public ProductType getType() {
         return productType;
-    }
-
-    /**
-     * Sets type.
-     *
-     * @param type the type
-     */
-    public void setType(final Integer type) {
-        productType = type;
     }
 
     @Override
@@ -92,5 +72,62 @@ public class Product {
                 + "name='" + productName + '\''
                 + ", price=" + productPrice
                 + ", type=" + productType + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(productName, product.productName) && productType == product.productType;
+    }
+
+    public void validate() throws ProductDataInvalidException {
+        List<ValidationError> validationErrorList = new ArrayList<>();
+
+        if(this.productName.isBlank()){
+            validationErrorList.add(new ValidationError("productName","Product name shouldn't be empty"));
+        }
+        if(this.productPrice < 0){
+            validationErrorList.add(new ValidationError("productPrice","Product price shouldn't be less than 0"));
+        }
+
+        if(validationErrorList.size() > 0){
+            throw new ProductDataInvalidException("Validation errors", validationErrorList);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productName, productType);
+    }
+
+    public static ProductBuilder builder(){
+        return new ProductBuilder();
+    }
+
+    public static final class ProductBuilder{
+        private String productName;
+        private Double productPrice;
+        private ProductType productType;
+
+        public ProductBuilder setProductName(String productName) {
+            this.productName = productName;
+            return this;
+        }
+
+        public ProductBuilder setProductPrice(Double productPrice) {
+            this.productPrice = productPrice;
+            return this;
+        }
+
+        public ProductBuilder setProductType(ProductType productType) {
+            this.productType = productType;
+            return this;
+        }
+
+        public Product build() {
+            return new Product(this.productName, this.productPrice, this.productType);
+        }
     }
 }

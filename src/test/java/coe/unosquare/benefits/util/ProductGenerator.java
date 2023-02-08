@@ -9,6 +9,7 @@
 package coe.unosquare.benefits.util;
 
 import coe.unosquare.benefits.product.Product;
+import coe.unosquare.benefits.product.ProductType;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -33,15 +34,14 @@ public final class ProductGenerator {
      *                     the number of different products in the cart.
      * @return the map
      */
-    public static Map<Product, Integer> generateProducts(final Integer expectedSize) {
+    public static Map<Product, Integer> generateProducts(final Integer expectedSize){
         HashMap<Product, Integer> products = new HashMap<>();
-        IntStream.rangeClosed(1, expectedSize).forEach(id -> {
-            products.put(new Product("Product " + id, //product name
-                            Double.parseDouble(new DecimalFormat("0.00")
-                                                .format(new Random().nextDouble() * 10.00)), //price
-                            new Random().nextInt(3) + 1), //type
-                    1); //quantity
-        });
+        IntStream.rangeClosed(1, expectedSize).forEach(id -> products.put(Product.builder()
+                        .setProductName("Product " + id +"")
+                        .setProductPrice(Double.parseDouble(new DecimalFormat("0.00").format(new Random().nextDouble() * 10.00)))
+                        .setProductType( ProductType.valueOf(new Random().nextInt(3) + 1)).build(),
+                new Random().nextInt(10) + 1
+        ));
         return products;
     }
 
@@ -59,13 +59,17 @@ public final class ProductGenerator {
             double price = Double.parseDouble(new DecimalFormat("0.00")
                                                 .format(new Random().nextDouble() * 10.00));
             int quantity = new Random().nextInt(5) + 1;
-            products.put(new Product("Product " + id, //product name
-                            price,
-                            new Random().nextInt(3) + 1), //type
-                    quantity); //quantity
+            products.put(Product.builder()
+                            .setProductName("Product " + id +"")
+                            .setProductPrice(price)
+                            .setProductType( ProductType.valueOf(new Random().nextInt(3) + 1)).build(),
+                        quantity
+                    );
             total = total + price * quantity;
             id++;
         }
+
+
         return products;
     }
 }

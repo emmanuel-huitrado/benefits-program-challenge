@@ -1,16 +1,15 @@
 /*
  * package-info.java
  * 1.0
- * 2022-11-07
+ * 2023-02-08
  * Copyright 2022 Unosquare
  * Any illegal reproduction of this content will result in immediate legal action.
  */
 
 /**
- * This package contains all classes related to Product objects related.
+ * This package contains all classes related to Exception object related.
  *
- * @author Emmanuel Huitrado, Luis Orozco
+ * @author Luis Orozco
  * @version 1.0
  */
-
-package coe.unosquare.benefits.product;
+package coe.unosquare.benefits.exception;
