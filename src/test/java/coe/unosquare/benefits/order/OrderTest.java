@@ -98,8 +98,6 @@ class OrderTest{
         order.removeProduct(product);
 
         Checkout checkout = Checkout.getCheckout();
-        checkout.print(order);
-
 
         assertEquals(28.50, checkout.pay(order, PaymentType.VISA));
     }
@@ -121,10 +119,8 @@ class OrderTest{
         Order order = new Order(new HashMap<>());
         order.addProduct(product,1);
         order.addProduct(product2,1);
-        //DiscountFactory.addDiscount(PaymentType.OTHER, new DiscountAmex());
 
         Checkout checkout = Checkout.getCheckout();
-        checkout.print(order);
 
         try {
             assertEquals(15.00, checkout.pay(order, PaymentType.OTHER));
@@ -174,7 +170,6 @@ class OrderTest{
         order.addProduct(product2,2);
 
         Checkout checkout = Checkout.getCheckout();
-        checkout.print(order);
 
         assertEquals(0.05,  payOrder(order.getOrder(), PaymentType.VISA));
 
@@ -200,7 +195,6 @@ class OrderTest{
         order.removeProduct(product);
 
         Checkout checkout = Checkout.getCheckout();
-        checkout.print(order);
 
         assertEquals(0.08,  payOrder(order.getOrder(), PaymentType.MASTERCARD));
 
